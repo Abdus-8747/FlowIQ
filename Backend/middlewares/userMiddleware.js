@@ -1,0 +1,24 @@
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+
+const verifyUser = async (req, res, next) => {
+    try {
+        let token = req.headers.authorization;
+
+        if (token && token.startsWith("Bearer")) {
+            token = token.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            // Fix: select("-password") to exclude password
+            req.user = await User.findById(decoded.id).select("-password");
+
+            next();
+        } else {
+            return res.status(401).json({ message: "Not authorized, no token" });
+        }
+    } catch (error) {
+        return res.status(401).json({ message: "Token failed", error: error.message });
+    }
+};
+
+export default verifyUser;
