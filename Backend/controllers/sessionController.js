@@ -21,7 +21,7 @@ export const createSession = async (req, res) => {
     } = req.body;
 
     const session = await Session.create({
-      user: req.user.id,
+      user: req.user._id,
       projectDescription,
       teamSize,
       budget,
@@ -53,7 +53,7 @@ export const createSession = async (req, res) => {
  */
 export const getMySessions = async (req, res) => {
   try {
-    const sessions = await Session.find({ user: req.user.id })
+    const sessions = await Session.find({ user: req.user._id })
       .sort({ createdAt: -1 });
 
     return res.json(sessions);
@@ -80,7 +80,7 @@ export const getSessionById = async (req, res) => {
     }
 
     // Ownership check
-    if (session.user.toString() !== req.user.id) {
+    if (session.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Access denied" });
     }
 
@@ -106,7 +106,7 @@ export const deleteSession = async (req, res) => {
       return res.status(404).json({ message: "Session not found" });
     }
 
-    if (session.user.toString() !== req.user.id) {
+    if (session.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Access denied" });
     }
 

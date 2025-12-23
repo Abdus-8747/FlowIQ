@@ -29,7 +29,7 @@ export const analyzeSessionWithLLM = async (req, res) => {
     }
 
     // ownership check
-    if (session.user.toString() !== req.user.id) {
+    if (session.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Access denied" });
     }
 
@@ -170,7 +170,7 @@ RESPONSE FORMAT (STRICT):
     session.modelsGenerated = modelDocs.map((m) => m._id);
     session.analysisStatus = "completed";
     session.aiMeta = {
-      modelUsed: "llama-3.1-8b-instant",
+      modelUsed: session.groqModel,
     };
 
     await session.save();
@@ -197,7 +197,7 @@ export const isModelsGenerated = async (req, res) => {
     }
 
     // ownership check
-    if (session.user.toString() !== req.user.id) {
+    if (session.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Access denied" });
     }
 

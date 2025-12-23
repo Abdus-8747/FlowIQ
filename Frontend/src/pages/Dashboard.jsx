@@ -20,7 +20,7 @@ export default function Dashboard() {
       backend: 1,
       tester: 0,
       devops: 0,
-      aiEngineer: 0,
+      aiengineer: 0,
     },
     budget: 500000, // Default budget in rupees
     timeline: "short-term",
@@ -173,7 +173,6 @@ export default function Dashboard() {
                   >
                     <option value="llama-3.1-8b-instant">Llama 3.1 8B - Fast & Cost-effective</option>
                     <option value="llama-3.3-70b-versatile">Llama 3.3 70B - Balanced Performance</option>
-                    <option value="gpt-oss-120b">GPT-OSS 120B - High Accuracy More Tokens</option>
                     <option value="qwen/qwen3-32b">Qwen 3.3 32B - Best for Complex Tasks</option>
                     <option value="groq/compound">Groq Compound - High Performance</option>
                   </select>
