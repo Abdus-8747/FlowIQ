@@ -16,7 +16,8 @@ export const createSession = async (req, res) => {
       requirementsClarity,
       riskLevel,
       clientInvolvement,
-      complianceRequired
+      complianceRequired,
+      groqModel
     } = req.body;
 
     const session = await Session.create({
@@ -29,6 +30,7 @@ export const createSession = async (req, res) => {
       riskLevel,
       clientInvolvement,
       complianceRequired,
+      groqModel,
       analysisStatus: "pending"
     });
 

@@ -31,7 +31,7 @@ export default function Footer() {
 
           <div className="flex space-x-3">
             <a
-              href="https://github.com/Abdus-8747"
+              href="https://github.com/Abdus-8747/FlowIQ"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white transition-colors"

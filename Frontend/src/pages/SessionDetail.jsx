@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchModels, analyzeSession } from "../features/model/modelSlice";
+import { fetchSessionById } from "../features/session/sessionSlice";
 import { useParams } from "react-router-dom";
 import ModelView from "../components/ModelView";
+import ModelHeader from "../components/ModelHeader";
 
 export default function SessionDetail() {
     const { id } = useParams();
     const dispatch = useDispatch();
 
     const { list: models, loading } = useSelector((state) => state.models);
+    const { current: session } = useSelector((state) => state.sessions);
 
     const [activeIndex, setActiveIndex] = useState(0);
-    const [_aiAnalyzed, setAiAnalyzed] = useState(false);
+    const [aiAnalyzed, setAiAnalyzed] = useState(false);
+    const [budgetMultiplier, setBudgetMultiplier] = useState(1); // 0.5 to 2.0
 
     const handleAnalyze = async () => {
         try {
@@ -21,10 +25,25 @@ export default function SessionDetail() {
             console.error("Analysis failed:", error);
         }
     };
-    //console.log("Ai Analyzed:", aiAnalyzed);
+
+    // Calculate adjusted time based on budget multiplier
+    const getAdjustedTime = (baseTime, multiplier) => {
+        if (!baseTime) return baseTime;
+        
+        // Parse the time string and adjust
+        const timeMatch = baseTime.match(/(\d+)-(\d+)\s*(weeks?|months?)/i);
+        if (!timeMatch) return baseTime;
+        
+        const min = Math.max(1, Math.round(parseInt(timeMatch[1]) / multiplier));
+        const max = Math.max(1, Math.round(parseInt(timeMatch[2]) / multiplier));
+        const unit = timeMatch[3].toLowerCase();
+        
+        return `${min}-${max} ${unit}`;
+    };
 
     useEffect(() => {
         dispatch(fetchModels(id));
+        dispatch(fetchSessionById(id));
     }, [dispatch, id]);
 
     return (
@@ -120,8 +139,49 @@ export default function SessionDetail() {
                             </div>
                         </div>
 
+                        <ModelHeader 
+                        model={models[activeIndex]}
+                        adjustedTime={getAdjustedTime(models[activeIndex]?.estimatedTime, budgetMultiplier)}
+                        />
+
+                        {/* Budget Range Slider */}
+                        {session && (
+                            <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 mb-8 mt-8">
+                                <h2 className="text-xl font-semibold text-white mb-4">Budget Adjustment</h2>
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center">
+                                        <label className="text-slate-300">Budget Multiplier: {budgetMultiplier.toFixed(1)}x</label>
+                                        <span className="text-green-400 font-semibold">
+                                            ₹{(session.budget * budgetMultiplier).toLocaleString()}
+                                        </span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0.5"
+                                        max="2.0"
+                                        step="0.1"
+                                        value={budgetMultiplier}
+                                        onChange={(e) => setBudgetMultiplier(parseFloat(e.target.value))}
+                                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider"
+                                    />
+                                    <div className="flex justify-between text-sm text-slate-400">
+                                        <span>Lower Budget (Slower But Affordable)</span>
+                                        <span>Higher Budget (Faster But Expensive)</span>
+                                    </div>
+                                    <div className="text-center text-slate-300">
+                                        Adjusted Time: <span className="text-cyan-400 font-semibold">
+                                            {getAdjustedTime(models[activeIndex]?.estimatedTime, budgetMultiplier)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Active Model View */}
-                        <ModelView model={models[activeIndex]} />
+                        <ModelView 
+                            model={models[activeIndex]} 
+                            adjustedTime={getAdjustedTime(models[activeIndex]?.estimatedTime, budgetMultiplier)}
+                        />
                     </>
                 )}
             </div>

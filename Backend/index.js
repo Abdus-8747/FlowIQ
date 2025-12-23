@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-// import morgan from "morgan";
+//import morgan from "morgan";
 
 // Routes
 import userRoutes from "./routes/userRoute.js";
@@ -18,24 +18,18 @@ import connectDB from "./config/db.js";
 
 const app = express();
 
-/* =======================
-   ENV VALIDATION
-======================= */
+// Check for MONGO_URI
 if (!process.env.MONGO_URI) {
   console.error("❌ MONGO_URI missing in .env");
   process.exit(1);
 }
 
-/* =======================
-   SECURITY MIDDLEWARE
-======================= */
+// Security middleware
 app.use(helmet());
 
-// app.use(morgan("dev")); // enable if needed
+//app.use(morgan("dev"));
 
-/* =======================
-   RATE LIMITING
-======================= */
+// Rate Limiting
 const limiter = rateLimit({
   windowMs: (process.env.RATE_LIMIT_WINDOW || 15) * 60 * 1000, // 15 mins
   max: process.env.RATE_LIMIT_MAX || 100,
@@ -47,9 +41,7 @@ const limiter = rateLimit({
 
 app.use("/api", limiter);
 
-/* =======================
-   CORS CONFIG
-======================= */
+// CORS configuration
 const corsOptions = {
   origin: process.env.CLIENT_URL?.split(",") || "http://localhost:5173",
   credentials: true,
@@ -59,27 +51,21 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-/* =======================
-   BODY PARSER
-======================= */
+// Body parser
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-/* =======================
-   HEALTH CHECK
-======================= */
+// Health Check Route
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Server is running 🚀",
+    message: "Server is running smoothly!",
   });
 });
 
 const PORT = process.env.PORT || 5000;
 
-/* =======================
-   SERVER START
-======================= */
+// Start Server
 const startServer = async () => {
   try {
     await connectDB();
@@ -101,10 +87,10 @@ const startServer = async () => {
     });
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`Server running on port ${PORT}`);
     });
   } catch (error) {
-    console.error("❌ Failed to start server:", error.message);
+    console.error("Failed to start server:", error.message);
     process.exit(1);
   }
 };

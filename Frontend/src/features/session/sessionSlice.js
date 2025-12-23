@@ -17,13 +17,24 @@ export const fetchSessions = createAsyncThunk(
   }
 );
 
+export const fetchSessionById = createAsyncThunk(
+  "session/fetchById",
+  async (sessionId) => {
+    const res = await api.get(`/sessions/${sessionId}`);
+    return res.data;
+  }
+);
+
 const sessionSlice = createSlice({
   name: "sessions",
-  initialState: { list: [], loading: false },
+  initialState: { list: [], current: null, loading: false },
   extraReducers: (builder) => {
     builder
       .addCase(fetchSessions.fulfilled, (state, action) => {
         state.list = action.payload;
+      })
+      .addCase(fetchSessionById.fulfilled, (state, action) => {
+        state.current = action.payload;
       });
   },
 });

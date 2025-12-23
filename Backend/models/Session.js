@@ -1,21 +1,18 @@
 import mongoose from "mongoose";
 
 const sessionSchema = new mongoose.Schema({
-  // who created this session
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true
   },
 
-  // main idea
   projectDescription: {
     type: String,
     required: true,
     trim: true
   },
 
-  // clearer team structure (better AI reasoning)
   teamSize: {
     frontend: { type: Number, default: 0 },
     backend: { type: Number, default: 0 },
@@ -25,10 +22,8 @@ const sessionSchema = new mongoose.Schema({
     aiengineer: { type: Number, default: 0 }
   },
 
-  // project constraints
   budget: {
-    type: String,
-    enum: ["low", "medium", "high"],
+    type: Number,
     required: true
   },
 
@@ -38,7 +33,7 @@ const sessionSchema = new mongoose.Schema({
     required: true
   },
 
-  // decision-driving fields for SDLC selection
+
   requirementsClarity: {
     type: String,
     enum: ["clear", "partial", "unclear"],
@@ -62,7 +57,12 @@ const sessionSchema = new mongoose.Schema({
     default: false
   },
 
-  // AI processing metadata
+  groqModel: {
+    type: String,
+    enum: ["llama-3.1-8b-instant", "llama-3.1-70b-versatile", "llama-3.1-405b-instruct"],
+    required: true
+  },
+
   analysisStatus: {
     type: String,
     enum: ["pending", "processing", "completed", "failed"],
@@ -74,7 +74,7 @@ const sessionSchema = new mongoose.Schema({
   ],
 
   aiMeta: {
-    modelUsed: String,        // gpt-4, llama, gemini etc
+    modelUsed: String,
     tokensUsed: Number,
     processingTimeMs: Number
   }

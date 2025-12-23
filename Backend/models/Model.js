@@ -3,11 +3,13 @@ import mongoose from "mongoose";
 const modelSchema = new mongoose.Schema({
   session: { type: mongoose.Schema.Types.ObjectId, ref: "Session" },
 
-  name: { type: String, required: true }, // Agile, Spiral, etc.
+  name: { type: String, required: true },
 
   whySelected: { type: String, required: true },
 
   bestFor: [{ type: String }],
+
+  estimatedTime: { type: String, required: true },
 
   phases: [
     {
@@ -26,7 +28,7 @@ const modelSchema = new mongoose.Schema({
     type: String
   },
 
-  llmConfidenceScore: { type: Number }, // optional but cool
+  llmConfidenceScore: { type: Number },
 
   notes: { type: String, default: "" }
 }, { timestamps: true });

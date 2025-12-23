@@ -60,6 +60,27 @@ export default function Models() {
             phases: ["Backlog", "To Do", "In Progress", "Done"],
             learnmoreLink: "https://en.wikipedia.org/wiki/Kanban_(development)",
         },
+        {
+            name: "Incremental",
+            description: "Builds software in increments or parts",
+            icon: "➕",
+            phases: ["Requirement Analysis", "Design", "Implementation", "Testing", "Deployment"],
+            learnmoreLink: "https://en.wikipedia.org/wiki/Incremental_build_model",
+        },
+        {
+            name: "RAD",
+            description: "Rapid Application Development focusing on speed and iteration",
+            icon: "⚡",
+            phases: ["Planning", "Design", "Build", "Test"],
+            learnmoreLink: "https://en.wikipedia.org/wiki/Rapid_application_development",
+        },
+        {
+            name: "Prototype",
+            description: "Creates prototypes to refine requirements",
+            icon: "🛠️",
+            phases: ["Requirement Gathering", "Prototype Development", "User Evaluation", "Refinement"],
+            learnmoreLink: "https://en.wikipedia.org/wiki/Prototyping_model",
+        }
     ];
 
     return (

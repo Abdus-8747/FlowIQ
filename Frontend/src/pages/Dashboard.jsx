@@ -22,13 +22,16 @@ export default function Dashboard() {
       devops: 0,
       aiEngineer: 0,
     },
-    budget: "medium",
+    budget: 500000, // Default budget in rupees
     timeline: "short-term",
     requirementsClarity: "partial",
     riskLevel: "medium",
     clientInvolvement: "medium",
     complianceRequired: false,
+    groqModel: "llama-3.1-8b-instant", // Default model
   });
+
+  const [selectedModel, setSelectedModel] = useState("llama-3.1-8b-instant");
 
   // fetch sessions on load
   useEffect(() => {
@@ -49,13 +52,22 @@ export default function Dashboard() {
       });
     } else if (type === "checkbox") {
       setFormData({ ...formData, [name]: checked });
+    } else if (name === "budget") {
+      setFormData({ ...formData, [name]: Number(value) });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
+  const handleModelChange = (e) => {
+    const model = e.target.value;
+    setSelectedModel(model);
+    setFormData({ ...formData, groqModel: model });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const res = await dispatch(createSession(formData));
     if (res.payload?._id) {
       navigate(`/session/${res.payload._id}`);
@@ -128,22 +140,48 @@ export default function Dashboard() {
               </div>
 
               {/* Project Parameters */}
-              <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Budget
+                    Budget (₹)
                   </label>
-                  <select
+                  <input
+                    type="number"
                     name="budget"
+                    min="50000"
+                    max="5000000"
+                    step="25000"
+                    value={formData.budget}
                     onChange={handleChange}
                     className="w-full p-3 bg-slate-900/50 rounded-lg border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  >
-                    <option value="low">Low Budget</option>
-                    <option value="medium">Medium Budget</option>
-                    <option value="high">High Budget</option>
-                  </select>
+                    placeholder="Enter budget in rupees"
+                  />
+                  <div className="mt-2 text-sm text-slate-400">
+                    Range: ₹50,000 - ₹50,00,000
+                  </div>
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    AI Model Selection
+                  </label>
+                  <select
+                    name="groqModel"
+                    value={selectedModel}
+                    onChange={handleModelChange}
+                    className="w-full p-3 bg-slate-900/50 rounded-lg border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  >
+                    <option value="llama-3.1-8b-instant">Llama 3.1 8B - Fast & Cost-effective</option>
+                    <option value="llama-3.3-70b-versatile">Llama 3.3 70B - Balanced Performance</option>
+                    <option value="gpt-oss-120b">GPT-OSS 120B - High Accuracy More Tokens</option>
+                    <option value="qwen/qwen3-32b">Qwen 3.3 32B - Best for Complex Tasks</option>
+                    <option value="groq/compound">Groq Compound - High Performance</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Additional Parameters */}
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     Timeline
@@ -204,17 +242,22 @@ export default function Dashboard() {
                   </select>
                 </div>
 
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    name="complianceRequired"
-                    checked={formData.complianceRequired}
-                    onChange={handleChange}
-                    className="w-5 h-5 text-blue-600 bg-slate-900/50 border-slate-600 rounded focus:ring-blue-500 focus:ring-2"
-                  />
-                  <label className="text-sm font-medium text-slate-300">
-                    Compliance Required
+                <div className="flex flex-col justify-end">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Compliance
                   </label>
+                  <div className="flex items-center space-x-3 h-[46px]">
+                    <input
+                      type="checkbox"
+                      name="complianceRequired"
+                      checked={formData.complianceRequired}
+                      onChange={handleChange}
+                      className="w-5 h-5 text-blue-600 bg-slate-900/50 border-slate-600 rounded focus:ring-blue-500 focus:ring-2"
+                    />
+                    <label className="text-sm font-medium text-slate-300">
+                      Required
+                    </label>
+                  </div>
                 </div>
               </div>
 
@@ -291,5 +334,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+    
   );
 }

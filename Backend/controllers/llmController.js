@@ -21,6 +21,7 @@ const extractJSON = (text) => {
 export const analyzeSessionWithLLM = async (req, res) => {
   try {
     const { sessionId } = req.params;
+    //const { modelSelected } = req.body;
 
     const session = await Session.findById(sessionId);
     if (!session) {
@@ -88,6 +89,9 @@ IMPORTANT INSTRUCTIONS (READ CAREFULLY):
 6. Be honest:
    - If a model is risky or weak for this project, clearly state why.
 7. Confidence score must be realistic, not inflated.
+8. The response must contain technical details, avoiding vague generalities.
+9. It should be helpful for both technical and non-technical stakeholders.
+
 
 STRICT RULES:
 - Respond ONLY in valid JSON
@@ -96,6 +100,11 @@ STRICT RULES:
 - Provide pros, cons, and whenNotToUse grounded in THIS project
 - Descriptions must be clear, applied, and scenario-based
 - Give llmConfidenceScore between 0 and 1 for each model
+- Calculate estimatedTime based on budget: Higher budget = faster delivery
+  - Budget < ₹2,50,000: 4-8 months
+  - Budget ₹2,50,000-₹7,50,000: 2-4 months  
+  - Budget ₹7,50,000-₹15,00,000: 1-2 months
+  - Budget > ₹15,00,000: 2-6 weeks
 - Do NOT include any extra text outside JSON
 
 RESPONSE FORMAT (STRICT):
@@ -106,6 +115,7 @@ RESPONSE FORMAT (STRICT):
       "name": "",
       "whySelected": "",
       "bestFor": [],
+      "estimatedTime": "",
       "phases": [
         {
           "name": "",
@@ -127,7 +137,7 @@ RESPONSE FORMAT (STRICT):
 
     // ------------------ GROQ CALL ------------------
     const completion = await groq.chat.completions.create({
-      model: "llama-3.1-8b-instant",
+      model: session.groqModel,
       messages: [{ role: "user", content: prompt }],
       temperature: 0.3,
     });
@@ -146,6 +156,7 @@ RESPONSE FORMAT (STRICT):
         name: m.name,
         whySelected: m.whySelected,
         bestFor: m.bestFor,
+        estimatedTime: m.estimatedTime,
         phases: m.phases,
         pros: m.pros,
         cons: m.cons,

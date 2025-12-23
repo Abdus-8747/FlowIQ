@@ -1,4 +1,4 @@
-export default function ModelHeader({ model }) {
+export default function ModelHeader({ model, adjustedTime }) {
   return (
     <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-8">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
@@ -20,6 +20,12 @@ export default function ModelHeader({ model }) {
               {Math.round(model.llmConfidenceScore * 100)}%
             </div>
             <div className="text-xs text-slate-400">Confidence</div>
+          </div>
+          <div className="text-right">
+            <div className="text-lg font-semibold text-cyan-400">
+              {adjustedTime || model.estimatedTime}
+            </div>
+            <div className="text-xs text-slate-400">Est. Time</div>
           </div>
         </div>
       </div>

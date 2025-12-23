@@ -1,14 +1,12 @@
-import ModelHeader from "./ModelHeader";
 import WhySelected from "./WhySelected";
 import SDLCDiagram from "./SDLCDiagram";
 import PhaseTimeline from "./PhaseTimeline";
 import ProsCons from "./ProsCons";
 import UsageHints from "./UsageHints";
 
-export default function ModelView({ model }) {
+export default function ModelView({ model, adjustedTime }) {
   return (
     <div className="space-y-8">
-      <ModelHeader model={model} />
       <WhySelected text={model.whySelected} />
       <SDLCDiagram model={model} />
       <PhaseTimeline phases={model.phases} />
