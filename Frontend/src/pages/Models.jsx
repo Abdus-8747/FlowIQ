@@ -11,11 +11,6 @@ export default function Models() {
     const dispatch = useDispatch();
     const { list: models, loading: _loading } = useSelector((state) => state.models);
 
-    useEffect(() => {
-        // Fetch all models or a general set
-        // For now, we'll assume we can fetch without session ID
-        dispatch(fetchModels());
-    }, [dispatch]);
 
     const modelTypes = [
         {
